@@ -1,3 +1,6 @@
 [submodule "dynamorio"]
 	path = dynamorio
 	url = https://github.com/DynamoRIO/dynamorio.git
+[submodule "src/clients/drcctlib_gpupunk"]
+	path = src/clients/drcctlib_gpupunk
+	url = git@github.com:FindHao/drcctlib_gpupunk.git
