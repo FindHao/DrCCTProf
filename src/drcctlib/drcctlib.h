@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2020 Xuhpclab. All rights reserved.
+ *  Copyright (c) 2020-2021 Xuhpclab. All rights reserved.
  *  Licensed under the MIT License.
  *  See LICENSE file for more information.
  */
@@ -10,7 +10,8 @@
 #include <cstdint>
 
 #include "dr_api.h"
-#include "drcctlib_global_share.h"
+#include "drcctlib_defines.h"
+#include "drcctlib_utils.h"
 #include "drcctlib_filter_func_list.h"
 
 enum {

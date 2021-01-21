@@ -1,5 +1,5 @@
 /* 
- *  Copyright (c) 2020 Xuhpclab. All rights reserved.
+ *  Copyright (c) 2020-2021 Xuhpclab. All rights reserved.
  *  Licensed under the MIT License.
  *  See LICENSE file for more information.
  */
@@ -16,10 +16,10 @@
 
 using namespace std;
 
-#define DRCCTLIB_PRINTF(format, args...) \
-    DRCCTLIB_PRINTF_TEMPLATE("reuse_distance_client_cache_hpc_fmt", format, ##args)
-#define DRCCTLIB_EXIT_PROCESS(format, args...) \
-    DRCCTLIB_CLIENT_EXIT_PROCESS_TEMPLATE("reuse_distance_client_cache_hpc_fmt", format, ##args)
+#define DRCCTLIB_PRINTF(_FORMAT, _ARGS...) \
+    DRCCTLIB_PRINTF_TEMPLATE("reuse_distance_client_cache_hpc_fmt", _FORMAT, ##_ARGS)
+#define DRCCTLIB_EXIT_PROCESS(_FORMAT, _ARGS...) \
+    DRCCTLIB_CLIENT_EXIT_PROCESS_TEMPLATE("reuse_distance_client_cache_hpc_fmt", _FORMAT, ##_ARGS)
 
 static int tls_idx;
 
