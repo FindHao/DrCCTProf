@@ -13,3 +13,5 @@ scripts/lulesh_test.sh
 rebuild.sh
 
 src/clients/drcctlib_custom_client
+.idea/
+cmake-build-debug/
