@@ -63,7 +63,8 @@ struct Operation {
     {
     }
 
-    virtual ~Operation() = 0;
+    virtual ~Operation() {
+    }
 };
 
 typedef std::shared_ptr<Operation> OperationPtr;

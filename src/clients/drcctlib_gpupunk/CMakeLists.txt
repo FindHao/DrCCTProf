@@ -5,6 +5,7 @@
 #  **********************************************************
 
 cmake_minimum_required(VERSION 3.17)
+include(../../make/policies.cmake NO_POLICY_SCOPE)
 set(CMAKE_CXX_STANDARD 17)
 find_package(CUDAToolkit REQUIRED)
 
@@ -23,7 +24,7 @@ enable_language(CUDA)
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-include(../../make/policies.cmake NO_POLICY_SCOPE)
+
 
 set(SANITIZER_PATH ${CUDAToolkit_TARGET_DIR}/compute-sanitizer)
 include_directories(${SANITIZER_PATH}/include/ ${CUDAToolkit_TARGET_DIR}/include/)
@@ -36,7 +37,6 @@ if (UNIX)
   add_compile_options(-Wno-unused-function)
   add_compile_options(-Werror=sign-compare)
   add_compile_options(-Werror=narrowing)
-  add_compile_options(-std=c++11)
 
   if (DEBUG)
     add_compile_options(-g3)
@@ -46,8 +46,7 @@ endif (UNIX)
 # add third-party libraries
 
 add_library(drcctlib_gpupunk SHARED
-  drcctlib_gpupunk.cpp
-        gpupunk_api.cpp gpupunk_api.h memory.h)
+  drcctlib_gpupunk.cpp gpupunk_api.cpp )
 
 configure_DynamoRIO_client(drcctlib_gpupunk)
 use_DynamoRIO_extension(drcctlib_gpupunk drcctlib)

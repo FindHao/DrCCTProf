@@ -12,6 +12,7 @@
 #include "drcctlib.h"
 #include <sanitizer_callbacks.h>
 #include <iostream>
+#include <cstdlib>
 
 #define DRCCTLIB_PRINTF(format, args...) \
     DRCCTLIB_PRINTF_TEMPLATE("all_instr_cct_no_cache", format, ##args)
@@ -25,6 +26,8 @@ using std::endl;
 using namespace gpupunk;
 
 extern LockableMap <uint64_t, MemoryMap> memory_snapshot;
+
+int host_op_id = 0;
 
 static void
 ClientInit(int argc, const char *argv[]) {
@@ -61,10 +64,12 @@ gpupunk_memory_register_callback(void *wrapcxt, void **user_data) {
     void *drcontext = (void *) drwrap_get_drcontext(wrapcxt);
 
     auto md = (Sanitizer_ResourceMemoryData *) drwrap_get_arg(wrapcxt, 0);
-    gp_result_t result = gpupunk_memory_register(1, 2, md->address, md->address + md->size);
-    if (result == GPUPUNK_ERROR_DUPLICATE_ENTRY){
-    }else if (result == GPUPUNK_ERROR_NOT_EXIST_ENTRY){
-    }
+
+    gp_result_t result = gpupunk_memory_register(rand(), ++host_op_id, md->address, md->address + md->size);
+
+//    if (result == GPUPUNK_ERROR_DUPLICATE_ENTRY){
+//    }else if (result == GPUPUNK_ERROR_NOT_EXIST_ENTRY){
+//    }
 
     // dmem_alloc_size += MEM_RED_ZONE;
     // drwrap_set_arg(wrapcxt, 0, (void *)dmem_alloc_size);
@@ -86,11 +91,12 @@ RegisteBeforeWrapFunc(void *drcontext, const module_data_t *info, bool loaded) {
     app_pc gmrt = moudle_get_function_entry(info, "gpupunk_memory_register_trigger", true);
     if (gmrt != NULL) {
         drwrap_wrap(gmrt, gpupunk_memory_register_callback, NULL);
+        cout<<"====here====";
     }
-    app_pc gmut = moudle_get_function_entry(info, "gpupunk_memory_unregister_trigger", true);
-    if (gmut != NULL) {
-        drwrap_wrap(gmut, gpupunk_memory_unregister_callback, NULL);
-    }
+//    app_pc gmut = moudle_get_function_entry(info, "gpupunk_memory_unregister_trigger", true);
+//    if (gmut != NULL) {
+//        drwrap_wrap(gmut, gpupunk_memory_unregister_callback, NULL);
+//    }
 
 }
 
