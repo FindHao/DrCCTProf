@@ -15,9 +15,9 @@
 #include <cstdlib>
 
 #define DRCCTLIB_PRINTF(format, args...) \
-    DRCCTLIB_PRINTF_TEMPLATE("all_instr_cct_no_cache", format, ##args)
+    DRCCTLIB_PRINTF_TEMPLATE("gpupunk", format, ##args)
 #define DRCCTLIB_EXIT_PROCESS(format, args...) \
-    DRCCTLIB_CLIENT_EXIT_PROCESS_TEMPLATE("all_instr_cct_no_cache", format, ##args)
+    DRCCTLIB_CLIENT_EXIT_PROCESS_TEMPLATE("gpupunk", format, ##args)
 
 #include "gpupunk_api.h"
 
@@ -26,7 +26,7 @@ using std::endl;
 using namespace gpupunk;
 
 extern LockableMap <uint64_t, MemoryMap> memory_snapshot;
-
+extern int32_t host_op_id_start;
 int host_op_id = 0;
 
 static void
@@ -64,15 +64,18 @@ gpupunk_memory_register_callback(void *wrapcxt, void **user_data) {
     void *drcontext = (void *) drwrap_get_drcontext(wrapcxt);
 
     auto md = (Sanitizer_ResourceMemoryData *) drwrap_get_arg(wrapcxt, 0);
-
-    gp_result_t result = gpupunk_memory_register(rand(), ++host_op_id, md->address, md->address + md->size);
-
-//    if (result == GPUPUNK_ERROR_DUPLICATE_ENTRY){
-//    }else if (result == GPUPUNK_ERROR_NOT_EXIST_ENTRY){
-//    }
-
-    // dmem_alloc_size += MEM_RED_ZONE;
-    // drwrap_set_arg(wrapcxt, 0, (void *)dmem_alloc_size);
+//    only catch unifed memory
+    if(md->flags & SANITIZER_MEMORY_FLAG_MANAGED && md->flags & SANITIZER_MEMORY_FLAG_HOST_MAPPED){
+//        @todo host_op_id_start has bug
+        gp_result_t result = gpupunk_memory_register(rand(), host_op_id_start++, md->address, md->address + md->size);
+        if(result == GPUPUNK_ERROR_DUPLICATE_ENTRY){
+            PRINT("GPUPUNK_ERROR_DUPLICATE_ENTRY");
+            exit(-1);
+        }else if (result == GPUPUNK_ERROR_NOT_EXIST_ENTRY){
+            PRINT("GPUPUNK_ERROR_NOT_EXIST_ENTRY");
+            exit(-1);
+        }
+    }
 }
 
 static void
@@ -93,6 +96,7 @@ RegisteBeforeWrapFunc(void *drcontext, const module_data_t *info, bool loaded) {
         drwrap_wrap(gmrt, gpupunk_memory_register_callback, NULL);
         cout<<"====here====";
     }
+//    @todo
 //    app_pc gmut = moudle_get_function_entry(info, "gpupunk_memory_unregister_trigger", true);
 //    if (gmut != NULL) {
 //        drwrap_wrap(gmut, gpupunk_memory_unregister_callback, NULL);
@@ -108,10 +112,10 @@ RegisteBeforeWrapFunc(void *drcontext, const module_data_t *info, bool loaded) {
      if (gmrt != NULL) {
          drwrap_wrap(gmrt, gpupunk_memory_register_callback, NULL);
      }
-     app_pc gmut = moudle_get_function_entry(info, "gpupunk_memory_unregister_trigger", true);
-     if (gmut != NULL) {
-         drwrap_wrap(gmut, gpupunk_memory_unregister_callback, NULL);
-     }
+//     app_pc gmut = moudle_get_function_entry(info, "gpupunk_memory_unregister_trigger", true);
+//     if (gmut != NULL) {
+//         drwrap_wrap(gmut, gpupunk_memory_unregister_callback, NULL);
+//     }
  }
 
 #ifdef __cplusplus
@@ -120,7 +124,7 @@ extern "C" {
 
 DR_EXPORT void
 dr_client_main(client_id_t id, int argc, const char *argv[]) {
-    dr_set_client_name("DynamoRIO Client 'drcctlib_all_instr_cct_no_cache'",
+    dr_set_client_name("DynamoRIO Client 'gpupunk'",
                        "http://dynamorio.org/issues");
     ClientInit(argc, argv);
     drcctlib_init_ex(DRCCTLIB_FILTER_ALL_INSTR, INVALID_FILE, NULL, NULL, NULL,

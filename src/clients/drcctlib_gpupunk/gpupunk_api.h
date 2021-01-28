@@ -35,5 +35,6 @@ typedef enum gp_result {
 gp_result_t
 gpupunk_memory_register(int32_t memory_id, uint64_t host_opt_id, uint64_t start,
                         uint64_t end);
-
+gp_result_t
+gpupunk_memory_unregister(uint64_t host_op_id, uint64_t start, uint64_t end);
 #endif // DRCCTLIB_GPUPUNK_GPUPUNK_API_H
