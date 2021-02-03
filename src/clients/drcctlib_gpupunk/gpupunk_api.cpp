@@ -3,7 +3,7 @@
 using namespace gpupunk;
 gpupunk::LockableMap<uint64_t, MemoryMap> memory_snapshot;
 
-static int32_t host_op_id_start = 0xf0000000;
+
 
 gp_result_t
 gpupunk_memory_register(int32_t memory_id, uint64_t host_op_id, uint64_t start,

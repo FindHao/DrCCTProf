@@ -26,8 +26,7 @@ using std::endl;
 using namespace gpupunk;
 
 extern LockableMap <uint64_t, MemoryMap> memory_snapshot;
-extern int32_t host_op_id_start;
-int host_op_id = 0;
+static int32_t host_op_id_start = 0x80000000;
 
 static void
 ClientInit(int argc, const char *argv[]) {
@@ -70,10 +69,10 @@ gpupunk_memory_register_callback(void *wrapcxt, void **user_data) {
         gp_result_t result = gpupunk_memory_register(rand(), host_op_id_start++, md->address, md->address + md->size);
         if(result == GPUPUNK_ERROR_DUPLICATE_ENTRY){
             PRINT("GPUPUNK_ERROR_DUPLICATE_ENTRY");
-            exit(-1);
+//            exit(-1);
         }else if (result == GPUPUNK_ERROR_NOT_EXIST_ENTRY){
             PRINT("GPUPUNK_ERROR_NOT_EXIST_ENTRY");
-            exit(-1);
+//            exit(-1);
         }
     }
 }
